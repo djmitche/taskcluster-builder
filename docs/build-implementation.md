@@ -39,9 +39,14 @@ Dependency names follow some patterns:
 * `repo-${name}-exact-source` -- the exact source URL for the repository
 * `repo-${name}-stamp` -- the Stamp instance for this repository
 * `docker-image-${image}` -- the named Docker image is available in the local Docker daemon
+    // TODO: put these in download commit
+* `download-${name}` --the filename of a downloaded file
+* `download-${name}-stamp` --the stamp of a downloaded file
 * `docs-${name}-dir` -- the directory containing documentation for the named repository; this will always be `${baseDir}/docs/${name}`, allowing mounting `${baseDir}/docs` in a docker image if necessary.
 * `docs-${name}-stamp` -- the Stamp instance for the docs dir
 * `service-${name}-stamp` -- the Stamp instance for the built service
 * `service-${name}-docker-image` -- the built Docker image for the named service (used to create the Terraform-JSON output)
 * `service-${name}-image-on-registry` -- true if the docker image for the named service is already present on the Docker registry
 * `target-service-${name}` -- target dependency for the end-to-end build of the service (with optional push)
+* `target-worker-${name}` -- target dependency for the end-to-end build of the worker
+* `worker-${name}-stamp` -- the Stamp instance for the built worker executable

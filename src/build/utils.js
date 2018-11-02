@@ -416,6 +416,16 @@ exports.ensureDownload = ({tasks, baseDir, name, url}) => {
 };
 
 /**
+ * Run Packer in a Docker container.
+ *
+ * This is a thin wrapper around dockerRun that handles machine-parsable output.
+ */
+exports.packerRun = async ({command, utils, ...dockerRunOptions}) => {
+  // TODO
+  //await dockerRun
+};
+
+/**
  * Create the "Build Image" task, in a standard shape:
  *  - create a standardized tag for the image
  *  - check if it already exists locally or on the registry;

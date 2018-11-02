@@ -158,11 +158,19 @@ repositories:
     tier: workers
   source: https://github.com/taskcluster/docker-worker#master
 
+# TODO: let's make workers a separate configuration section
 - name: generic-worker
-  kind: other
+  kind: worker
+  worker:
+    implementation: generic-worker
+    release:
+      owner: taskcluster
+      repository: generic-worker
+      tag: v11.0.1
   docs:
     tier: workers
-  source: https://github.com/taskcluster/generic-worker#master
+  # this is brian's hacked version that works in GCP, plus the packer stuff
+  source: https://github.com/djmitche/generic-worker#bug1502371
 
 # libraries
 - name: azure-blob-storage
@@ -320,3 +328,31 @@ repositories:
   docs:
     tier: libraries
   source: https://github.com/taskcluster/ws-shell#master
+
+# What do we want?
+#  - generic-worker linux images for GCP, Packet, AWS regions [a, b, c]
+#  - docker-worker linux images for GCP, Packet, AWS regions [a, b, c]
+
+workers:
+- name: generic-worker-debian-9
+  kind: generic-worker
+  arch: linux-amd64
+  os: debian-9
+  generic-worker:
+    owner: taskcluster
+    repository: generic-worker
+    tag: v11.0.1
+  livelog:
+    owner: taskcluster
+    repository: livelog
+    tag: v1.1.0
+  clouds:
+    gcp: true
+    packet: true
+    aws:
+      regions:
+      - us-east-1
+      - us-east-2
+      - us-west-1
+      - us-east-2
+      - eu-central-1

@@ -29,6 +29,8 @@ The following kinds are defined:
 
 ## `service`
 
+The `service` kind describes web services that are built into container images that can then be run in Kubernetes.
+
 For `kind='service'`, there is an additional `service` property with:
 
 * `buildType` -- the type of service build (see below)
@@ -36,6 +38,10 @@ For `kind='service'`, there is an additional `service` property with:
 For `buildType == "heroku-buildpack"`, there are additional properties `stack` (the Heroku stack on which the image is based) and `buildpack` (the URL of the buildpack repository).
 
 The tools and docs sites are special-cased with `buildType == "tools-ui"` `buildType == "docs"`, which has the additional property `node` giving the node version.
+
+## `worker`
+
+The `worker` kind describes worker implementations that are built into various image formats for use in deployed clusters.
 
 ## `other`
 

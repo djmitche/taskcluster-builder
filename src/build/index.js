@@ -14,6 +14,7 @@ const generateRepoTasks = require('./repo');
 
 const _kindTaskGenerators = {
   service: require('./service'),
+  worker: require('./worker'),
   other: require('./other'),
 };
 
@@ -73,6 +74,9 @@ class Build {
     const target = [];
     if (this.cmdOptions.targetService) {
       target.push(`target-service-${this.cmdOptions.targetService}`);
+    }
+    if (this.cmdOptions.targetWorker) {
+      target.push(`target-worker-${this.cmdOptions.targetWorker}`);
     }
 
     const taskgraph = new TaskGraph(tasks, {
