@@ -1,0 +1,9 @@
+---
+defaults:
+  workers:
+    gcp:
+      # the GCP billing account for the Google Project.  Google prefers we not reveal this.
+      billingAccount:
+      # The builder key as output from running terraform in tf/.  This does not need to be
+      # regenerated once it is set up.  It is included here as JSON data.
+      builderKey:
