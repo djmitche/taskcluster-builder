@@ -5,6 +5,8 @@ const exec = util.promisify(require('child_process').execFile);
 const fs = require('fs');
 const os = require('os');
 const assert = require('assert');
+const rimraf = util.promisify(require('rimraf'));
+const mkdirp = util.promisify(require('mkdirp'));
 const path = require('path');
 const Docker = require('dockerode');
 const Observable = require('zen-observable');
@@ -362,6 +364,53 @@ exports.ensureDockerImage = (tasks, baseDir, image) => {
       return {
         [`docker-image-${image}`]: image,
       };
+    },
+  });
+};
+
+/**
+ * Ensure a file has been downloaded.  The provided `download-${name}` is the filename
+ * of the downloaded file.
+ */
+exports.ensureDownload = ({tasks, baseDir, name, url}) => {
+  exports.ensureTask(tasks, {
+    title: `Download ${name}`,
+    requires: [],
+    provides: [
+      `download-${name}-stamp`,
+      `download-${name}`,
+    ],
+    run: async (requirements, utils) => {
+      const stamp = new Stamp({step: 'download', version: 1}, {name, url});
+      const downloadDir = path.join(baseDir, `download-${name}`);
+      const filename = path.join(downloadDir, url.replace(/.*\//, '') || 'data');
+      const provides = {
+        [`download-${name}-stamp`]: stamp,
+        [`download-${name}`]: filename,
+      };
+      if (stamp.dirStamped(downloadDir)) {
+        return utils.skip({provides});
+      }
+      await rimraf(downloadDir);
+      await mkdirp(downloadDir);
+
+      const stream = got.stream(url);
+      stream.pipe(fs.createWriteStream(filename));
+
+      await utils.waitFor(new Observable(observer => {
+        const progress = (prog) => {
+          if (prog.percent && prog.percent < 1) {
+            utils.status({progress: prog.percent * 100});
+          }
+        };
+        stream.on('error', err => observer.error(err));
+        stream.on('end', () => observer.complete());
+        stream.on('uploadProgress', progress);
+        stream.on('downloadProgress', progress);
+      }));
+
+      stamp.stampDir(downloadDir);
+      return provides;
     },
   });
 };
